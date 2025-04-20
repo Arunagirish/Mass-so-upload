@@ -1,0 +1,51 @@
+@Metadata.layer: #CORE
+@UI.headerInfo: {
+    typeName: 'File Data',
+    typeNamePlural: 'File Data',
+    title: { type: #STANDARD, value: 'EndUser' },
+    description: { type: #STANDARD, value: 'FileId' }
+}
+annotate entity ZSALES_C_XL_DATA with
+{
+  @UI.hidden: true
+  @UI.lineItem: [{ type: #FOR_ACTION, label: 'Process Data', dataAction: 'processData' }
+                 ]
+
+  EndUser;
+  @UI.hidden: true
+  FileId;
+  
+  @UI.lineItem: [{ position: 5, label: 'Line' }]
+  LineNumber;
+
+  @UI.lineItem: [{ position: 40, label: 'Product' }]
+  product;
+
+  @UI.lineItem: [{ position: 50, label: 'Requested Quantity' }]
+  requestedquantity;
+
+  @UI.lineItem: [{ position: 60, label: 'Plant' }]
+  plant;
+
+  @UI.lineItem: [{ position: 70, label: 'Sales Order type' }]
+  salesordertype;
+
+  @UI.lineItem: [{ position: 80, label: 'Sales Organization' }]
+  salesorganization;
+
+  @UI.lineItem: [{ position: 90, label: 'Distribution Channel' }]
+  distributionchannel;
+
+  @UI.lineItem: [{ position: 100, label: 'Organization Division' }]
+  organizationdivision;
+
+  @UI.lineItem: [{ position: 110, label: 'Sold to Party' }]
+  soldtoparty;
+
+  @UI.lineItem: [{ position: 120, label: 'Header Text' }]
+  HeaderText;
+  /* Associations */
+  @UI.hidden: true
+  _XLUser;
+
+}

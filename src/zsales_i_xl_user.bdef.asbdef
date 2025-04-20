@@ -1,0 +1,96 @@
+managed with additional save implementation in class zsales_cl_bp_xl_data unique;
+strict ( 2 );
+with draft;
+define behavior for ZSALES_I_XL_USER alias XLHead
+implementation in class zsales_cl_bp_xl_user unique
+persistent table zsales_exceluser
+lock master
+total etag LastChangedAt
+draft table zsales_xl_user
+early numbering
+authorization master ( instance )
+etag master LocalLastChangedAt
+{
+  create;
+  update;
+  delete;
+  field ( readonly ) EndUser, FileId;
+  association _XLData { create; with draft; }
+  action uploadExcelData result [1] $self;
+  // Change File Status During Creation of new record
+  determination FillFileStatus on modify { field EndUser; }
+  // Change File Status When file is selected
+  determination FillSelectedStatus on modify { field Attachment; }
+  //determine action ChangeFileName { determination FillSelectedStatus ; }
+  side effects
+  {
+    field Attachment affects field FileStatus;
+    action uploadExcelData affects $self, messages;
+    //determine action ChangeFileName executed on field Attachment affects $self, messages;
+  }
+  draft action Activate optimized;
+  draft action Edit;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare;
+
+  mapping for zsales_exceluser
+    {
+      EndUser            = end_user;
+      FileId             = file_id;
+      FileStatus         = File_Status;
+      Attachment         = Attachment;
+      Mimetype           = Mimetype;
+      Filename           = Filename;
+      LocalCreatedBy     = local_created_by;
+      LocalCreatedAt     = local_created_at;
+      LocalLastChangedBy = local_last_changed_by;
+      LocalLastChangedAt = local_last_changed_at;
+      LastChangedAt      = last_changed_at;
+    }
+
+}
+
+
+
+define behavior for ZSALES_I_XL_DATA alias XLData
+implementation in class zsales_cl_bp_xl_data unique
+persistent table zsales_exceldata
+draft table zsales_xl_data
+lock dependent by _XLUser
+authorization dependent by _XLUser
+//etag master <field_name>
+{
+  update;
+  delete;
+  field ( readonly ) EndUser, FileId, LineNumber, salesitem, salesorder, orderquantity
+  , salesordertype, salesorganization, distributionchannel, organizationdivision,
+  soldtoparty, plant, product, requestedquantity,
+  HeaderText;
+  field ( readonly, numbering : managed ) LineId;
+  association _XLUser { with draft; }
+  // association _XLDATA { with draft; }
+  //action uploadXLData result [1] $self;
+  action processData result [1] $self;
+  determination save_so on save { create; }
+  mapping for zsales_exceldata
+    {
+      EndUser              = end_user;
+      FileId               = file_id;
+      LineId               = line_id;
+      LineNumber           = line_no;
+      OrderQuantity        = orderquantity;
+      SalesItem            = salesitem;
+      SalesOrder           = salesorder;
+      plant                = plant;
+      product              = product;
+      requestedquantity    = requestedquantity;
+      distributionchannel  = distribution_channel;
+      organizationdivision = organization_division;
+      salesordertype       = sales_order_type;
+      salesorganization    = sales_organization;
+      soldtoparty          = sold_to_party;
+      HeaderText           = header_text;
+    }
+
+}

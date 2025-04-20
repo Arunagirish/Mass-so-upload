@@ -1,0 +1,5 @@
+@EndUserText.label: 'services   defn for user'
+define service ZSALES_sd_XL_USER {
+  expose ZSALES_C_XL_USER as XLHead;
+  expose ZSALES_C_XL_DATA as XLDATA;
+}
